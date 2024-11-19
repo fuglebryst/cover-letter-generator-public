@@ -1,0 +1,842 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "metadata": {
+      "_generator": {
+        "name": "bicep",
+        "version": "0.31.34.60546",
+        "templateHash": "7084047109873835466"
+      }
+    },
+    "parameters": {
+      "sites_cover_letter_test_name": {
+        "type": "string",
+        "defaultValue": "[format('cover-letter-function-{0}', uniqueString(resourceGroup().id))]"
+      },
+      "namespaces_cover_letter_service_name": {
+        "type": "string",
+        "defaultValue": "[format('cover-letter-service-{0}', uniqueString(resourceGroup().id))]"
+      },
+      "databaseAccounts_cover_letter_db_name": {
+        "type": "string",
+        "defaultValue": "[format('cover-letter-db-{0}', uniqueString(resourceGroup().id))]"
+      },
+      "storageAccounts_coverletterstorage1_name": {
+        "type": "string",
+        "defaultValue": "[format('coverletterstorage{0}', uniqueString(resourceGroup().id))]"
+      },
+      "serverFarmName": {
+        "type": "string",
+        "defaultValue": "ASP-coverlettergenerator-bd26"
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.DocumentDB/databaseAccounts",
+        "apiVersion": "2024-05-15",
+        "name": "[parameters('databaseAccounts_cover_letter_db_name')]",
+        "location": "Norway East",
+        "tags": {
+          "defaultExperience": "Core (SQL)",
+          "hidden-cosmos-mmspecial": ""
+        },
+        "kind": "GlobalDocumentDB",
+        "identity": {
+          "type": "None"
+        },
+        "properties": {
+          "publicNetworkAccess": "Enabled",
+          "enableAutomaticFailover": false,
+          "enableMultipleWriteLocations": false,
+          "isVirtualNetworkFilterEnabled": false,
+          "virtualNetworkRules": [],
+          "disableKeyBasedMetadataWriteAccess": false,
+          "enableFreeTier": false,
+          "enableAnalyticalStorage": false,
+          "analyticalStorageConfiguration": {
+            "schemaType": "WellDefined"
+          },
+          "databaseAccountOfferType": "Standard",
+          "defaultIdentity": "FirstPartyIdentity",
+          "networkAclBypass": "None",
+          "disableLocalAuth": false,
+          "enablePartitionMerge": false,
+          "enableBurstCapacity": false,
+          "minimalTlsVersion": "Tls12",
+          "consistencyPolicy": {
+            "defaultConsistencyLevel": "Session",
+            "maxIntervalInSeconds": 5,
+            "maxStalenessPrefix": 100
+          },
+          "locations": [
+            {
+              "locationName": "Norway East",
+              "failoverPriority": 0,
+              "isZoneRedundant": false
+            }
+          ],
+          "cors": [],
+          "capabilities": [
+            {
+              "name": "EnableServerless"
+            }
+          ],
+          "ipRules": [],
+          "backupPolicy": {
+            "type": "Periodic",
+            "periodicModeProperties": {
+              "backupIntervalInMinutes": 240,
+              "backupRetentionIntervalInHours": 8,
+              "backupStorageRedundancy": "Geo"
+            }
+          },
+          "networkAclBypassResourceIds": [],
+          "capacity": {
+            "totalThroughputLimit": 4000
+          }
+        }
+      },
+      {
+        "type": "Microsoft.ServiceBus/namespaces",
+        "apiVersion": "2023-01-01-preview",
+        "name": "[parameters('namespaces_cover_letter_service_name')]",
+        "location": "northeurope",
+        "sku": {
+          "name": "Basic",
+          "tier": "Basic"
+        },
+        "properties": {
+          "geoDataReplication": {
+            "maxReplicationLagDurationInSeconds": 0,
+            "locations": [
+              {
+                "locationName": "northeurope",
+                "roleType": "Primary"
+              }
+            ]
+          },
+          "premiumMessagingPartitions": 0,
+          "minimumTlsVersion": "1.2",
+          "publicNetworkAccess": "Enabled",
+          "disableLocalAuth": false,
+          "zoneRedundant": false
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "apiVersion": "2023-05-01",
+        "name": "[parameters('storageAccounts_coverletterstorage1_name')]",
+        "location": "northeurope",
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "kind": "StorageV2",
+        "properties": {
+          "dnsEndpointType": "Standard",
+          "defaultToOAuthAuthentication": false,
+          "publicNetworkAccess": "Enabled",
+          "allowCrossTenantReplication": false,
+          "minimumTlsVersion": "TLS1_2",
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": true,
+          "largeFileSharesState": "Enabled",
+          "networkAcls": {
+            "bypass": "AzureServices",
+            "virtualNetworkRules": [],
+            "ipRules": [],
+            "defaultAction": "Allow"
+          },
+          "supportsHttpsTrafficOnly": true,
+          "encryption": {
+            "requireInfrastructureEncryption": false,
+            "services": {
+              "file": {
+                "keyType": "Account",
+                "enabled": true
+              },
+              "blob": {
+                "keyType": "Account",
+                "enabled": true
+              }
+            },
+            "keySource": "Microsoft.Storage"
+          },
+          "accessTier": "Hot"
+        }
+      },
+      {
+        "type": "Microsoft.Web/serverfarms",
+        "apiVersion": "2023-12-01",
+        "name": "[parameters('serverFarmName')]",
+        "location": "North Europe",
+        "sku": {
+          "name": "Y1",
+          "size": "Y1",
+          "family": "Y",
+          "capacity": 0
+        },
+        "kind": "functionapp",
+        "properties": {
+          "perSiteScaling": false,
+          "elasticScaleEnabled": false,
+          "maximumElasticWorkerCount": 1,
+          "isSpot": false,
+          "reserved": true,
+          "isXenon": false,
+          "hyperV": false,
+          "targetWorkerCount": 0,
+          "targetWorkerSizeId": 0,
+          "zoneRedundant": false
+        }
+      },
+      {
+        "type": "Microsoft.Web/sites",
+        "apiVersion": "2023-12-01",
+        "name": "[parameters('sites_cover_letter_test_name')]",
+        "location": "northeurope",
+        "kind": "functionapp,linux",
+        "properties": {
+          "enabled": true,
+          "hostNameSslStates": [
+            {
+              "name": "[format('{0}.azurewebsites.net', parameters('sites_cover_letter_test_name'))]",
+              "sslState": "Disabled",
+              "hostType": "Standard"
+            },
+            {
+              "name": "[format('{0}.scm.azurewebsites.net', parameters('sites_cover_letter_test_name'))]",
+              "sslState": "Disabled",
+              "hostType": "Repository"
+            }
+          ],
+          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverFarmName'))]",
+          "reserved": true,
+          "isXenon": false,
+          "hyperV": false,
+          "dnsConfiguration": {},
+          "vnetRouteAllEnabled": false,
+          "vnetImagePullEnabled": false,
+          "vnetContentShareEnabled": false,
+          "siteConfig": {
+            "numberOfWorkers": 1,
+            "linuxFxVersion": "Python|3.11",
+            "acrUseManagedIdentityCreds": false,
+            "alwaysOn": false,
+            "http20Enabled": false,
+            "functionAppScaleLimit": 200,
+            "minimumElasticInstanceCount": 0
+          },
+          "scmSiteAlsoStopped": false,
+          "clientAffinityEnabled": false,
+          "clientCertEnabled": false,
+          "clientCertMode": "Required",
+          "hostNamesDisabled": false,
+          "vnetBackupRestoreEnabled": false,
+          "customDomainVerificationId": "B04E7934E15B28DA4ED7E32BFD224FC2498A07F795FC0E376D67F98D4CF4E29A",
+          "containerSize": 1536,
+          "dailyMemoryTimeQuota": 0,
+          "httpsOnly": true,
+          "redundancyMode": "None",
+          "publicNetworkAccess": "Enabled",
+          "storageAccountRequired": false,
+          "keyVaultReferenceIdentity": "SystemAssigned"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/serverfarms', parameters('serverFarmName'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+        "apiVersion": "2024-05-15",
+        "name": "[format('{0}/{1}', parameters('databaseAccounts_cover_letter_db_name'), 'JobDatabase')]",
+        "location": "northeurope",
+        "properties": {
+          "resource": {
+            "id": "JobDatabase"
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cover_letter_db_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions",
+        "apiVersion": "2024-05-15",
+        "name": "[format('{0}/{1}', parameters('databaseAccounts_cover_letter_db_name'), '00000000-0000-0000-0000-000000000001')]",
+        "properties": {
+          "roleName": "Cosmos DB Built-in Data Reader",
+          "type": "BuiltInRole",
+          "assignableScopes": [
+            "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cover_letter_db_name'))]"
+          ],
+          "permissions": [
+            {
+              "dataActions": [
+                "Microsoft.DocumentDB/databaseAccounts/readMetadata",
+                "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/executeQuery",
+                "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/readChangeFeed",
+                "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/read"
+              ],
+              "notDataActions": []
+            }
+          ]
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cover_letter_db_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions",
+        "apiVersion": "2024-05-15",
+        "name": "[format('{0}/{1}', parameters('databaseAccounts_cover_letter_db_name'), '00000000-0000-0000-0000-000000000002')]",
+        "properties": {
+          "roleName": "Cosmos DB Built-in Data Contributor",
+          "type": "BuiltInRole",
+          "assignableScopes": [
+            "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cover_letter_db_name'))]"
+          ],
+          "permissions": [
+            {
+              "dataActions": [
+                "Microsoft.DocumentDB/databaseAccounts/readMetadata",
+                "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*",
+                "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*"
+              ],
+              "notDataActions": []
+            }
+          ]
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cover_letter_db_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+        "apiVersion": "2023-01-01-preview",
+        "name": "[format('{0}/{1}', parameters('namespaces_cover_letter_service_name'), 'RootManageSharedAccessKey')]",
+        "properties": {
+          "rights": [
+            "Listen",
+            "Manage",
+            "Send"
+          ]
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_cover_letter_service_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.ServiceBus/namespaces/networkRuleSets",
+        "apiVersion": "2023-01-01-preview",
+        "name": "[format('{0}/{1}', parameters('namespaces_cover_letter_service_name'), 'default')]",
+        "properties": {
+          "publicNetworkAccess": "Enabled",
+          "defaultAction": "Allow",
+          "virtualNetworkRules": [],
+          "ipRules": [],
+          "trustedServiceAccessEnabled": false
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_cover_letter_service_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.ServiceBus/namespaces/queues",
+        "apiVersion": "2023-01-01-preview",
+        "name": "[format('{0}/{1}', parameters('namespaces_cover_letter_service_name'), 'job-matching-queue')]",
+        "properties": {
+          "maxMessageSizeInKilobytes": 256,
+          "lockDuration": "PT1M",
+          "maxSizeInMegabytes": 1024,
+          "requiresDuplicateDetection": false,
+          "requiresSession": false,
+          "defaultMessageTimeToLive": "P14D",
+          "deadLetteringOnMessageExpiration": false,
+          "enableBatchedOperations": true,
+          "duplicateDetectionHistoryTimeWindow": "PT10M",
+          "maxDeliveryCount": 100,
+          "status": "Active",
+          "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+          "enablePartitioning": false,
+          "enableExpress": false
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_cover_letter_service_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices",
+        "apiVersion": "2023-05-01",
+        "name": "[format('{0}/{1}', parameters('storageAccounts_coverletterstorage1_name'), 'default')]",
+        "properties": {
+          "containerDeleteRetentionPolicy": {
+            "enabled": true,
+            "days": 7
+          },
+          "cors": {
+            "corsRules": []
+          },
+          "deleteRetentionPolicy": {
+            "allowPermanentDelete": false,
+            "enabled": true,
+            "days": 7
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_coverletterstorage1_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/fileServices",
+        "apiVersion": "2023-05-01",
+        "name": "[format('{0}/{1}', parameters('storageAccounts_coverletterstorage1_name'), 'default')]",
+        "properties": {
+          "protocolSettings": {
+            "smb": {}
+          },
+          "cors": {
+            "corsRules": []
+          },
+          "shareDeleteRetentionPolicy": {
+            "enabled": true,
+            "days": 7
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_coverletterstorage1_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/queueServices",
+        "apiVersion": "2023-05-01",
+        "name": "[format('{0}/{1}', parameters('storageAccounts_coverletterstorage1_name'), 'default')]",
+        "properties": {
+          "cors": {
+            "corsRules": []
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_coverletterstorage1_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/tableServices",
+        "apiVersion": "2023-05-01",
+        "name": "[format('{0}/{1}', parameters('storageAccounts_coverletterstorage1_name'), 'default')]",
+        "properties": {
+          "cors": {
+            "corsRules": []
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_coverletterstorage1_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+        "apiVersion": "2023-12-01",
+        "name": "[format('{0}/{1}', parameters('sites_cover_letter_test_name'), 'ftp')]",
+        "properties": {
+          "allow": false
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_cover_letter_test_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+        "apiVersion": "2023-12-01",
+        "name": "[format('{0}/{1}', parameters('sites_cover_letter_test_name'), 'scm')]",
+        "properties": {
+          "allow": false
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_cover_letter_test_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Web/sites/config",
+        "apiVersion": "2023-12-01",
+        "name": "[format('{0}/{1}', parameters('sites_cover_letter_test_name'), 'web')]",
+        "properties": {
+          "numberOfWorkers": 1,
+          "defaultDocuments": [
+            "Default.htm",
+            "Default.html",
+            "Default.asp",
+            "index.htm",
+            "index.html",
+            "iisstart.htm",
+            "default.aspx",
+            "index.php"
+          ],
+          "netFrameworkVersion": "v4.0",
+          "linuxFxVersion": "Python|3.11",
+          "requestTracingEnabled": false,
+          "remoteDebuggingEnabled": false,
+          "httpLoggingEnabled": false,
+          "acrUseManagedIdentityCreds": false,
+          "logsDirectorySizeLimit": 35,
+          "detailedErrorLoggingEnabled": false,
+          "publishingUsername": "REDACTED",
+          "scmType": "None",
+          "use32BitWorkerProcess": false,
+          "webSocketsEnabled": false,
+          "alwaysOn": false,
+          "managedPipelineMode": "Integrated",
+          "virtualApplications": [
+            {
+              "virtualPath": "/",
+              "physicalPath": "site\\wwwroot",
+              "preloadEnabled": false
+            }
+          ],
+          "loadBalancing": "LeastRequests",
+          "experiments": {
+            "rampUpRules": []
+          },
+          "autoHealEnabled": false,
+          "vnetRouteAllEnabled": false,
+          "vnetPrivatePortsCount": 0,
+          "publicNetworkAccess": "Enabled",
+          "cors": {
+            "allowedOrigins": [
+              "https://portal.azure.com",
+              "https://xn--sknadsbrev-0cb.no",
+              "https://cover-letter-generator-670866449050.europe-north1.run.app"
+            ],
+            "supportCredentials": false
+          },
+          "localMySqlEnabled": false,
+          "ipSecurityRestrictions": [
+            {
+              "ipAddress": "Any",
+              "action": "Allow",
+              "priority": 2147483647,
+              "name": "Allow all",
+              "description": "Allow all access"
+            }
+          ],
+          "scmIpSecurityRestrictions": [
+            {
+              "ipAddress": "Any",
+              "action": "Allow",
+              "priority": 2147483647,
+              "name": "Allow all",
+              "description": "Allow all access"
+            }
+          ],
+          "scmIpSecurityRestrictionsUseMain": false,
+          "http20Enabled": false,
+          "minTlsVersion": "1.2",
+          "scmMinTlsVersion": "1.2",
+          "ftpsState": "FtpsOnly",
+          "preWarmedInstanceCount": 0,
+          "functionAppScaleLimit": 200,
+          "functionsRuntimeScaleMonitoringEnabled": false,
+          "minimumElasticInstanceCount": 0,
+          "azureStorageAccounts": {}
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_cover_letter_test_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Web/sites/functions",
+        "apiVersion": "2023-12-01",
+        "name": "[format('{0}/{1}', parameters('sites_cover_letter_test_name'), 'enqueue_request')]",
+        "properties": {
+          "script_root_path_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/home/site/wwwroot/enqueue_request/",
+          "script_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/home/site/wwwroot/enqueue_request/__init__.py",
+          "config_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/home/site/wwwroot/enqueue_request/function.json",
+          "test_data_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/tmp/FunctionsData/enqueue_request.dat",
+          "href": "https://cover-letter-test.azurewebsites.net/admin/functions/enqueue_request",
+          "config": {
+            "scriptFile": "__init__.py",
+            "bindings": [
+              {
+                "authLevel": "anonymous",
+                "type": "httpTrigger",
+                "direction": "in",
+                "name": "req",
+                "methods": [
+                  "post"
+                ]
+              },
+              {
+                "type": "http",
+                "direction": "out",
+                "name": "$return"
+              },
+              {
+                "type": "serviceBus",
+                "direction": "out",
+                "name": "msg",
+                "queueName": "job-matching-queue",
+                "connection": "SERVICE_BUS_CONNECTION_STRING"
+              }
+            ]
+          },
+          "invoke_url_template": "https://cover-letter-test.azurewebsites.net/api/enqueue_request",
+          "language": "python",
+          "isDisabled": false
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_cover_letter_test_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Web/sites/functions",
+        "apiVersion": "2023-12-01",
+        "name": "[format('{0}/{1}', parameters('sites_cover_letter_test_name'), 'precompute_job_embeddings')]",
+        "properties": {
+          "script_root_path_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/home/site/wwwroot/precompute_job_embeddings/",
+          "script_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/home/site/wwwroot/precompute_job_embeddings/__init__.py",
+          "config_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/home/site/wwwroot/precompute_job_embeddings/function.json",
+          "test_data_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/tmp/FunctionsData/precompute_job_embeddings.dat",
+          "href": "https://cover-letter-test.azurewebsites.net/admin/functions/precompute_job_embeddings",
+          "config": {
+            "scriptFile": "__init__.py",
+            "bindings": [
+              {
+                "name": "queueItem",
+                "type": "queueTrigger",
+                "direction": "in",
+                "queueName": "job-scrape-complete",
+                "connection": "AzureWebJobsStorage"
+              }
+            ]
+          },
+          "language": "python",
+          "isDisabled": false
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_cover_letter_test_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Web/sites/functions",
+        "apiVersion": "2023-12-01",
+        "name": "[format('{0}/{1}', parameters('sites_cover_letter_test_name'), 'process_task')]",
+        "properties": {
+          "script_root_path_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/home/site/wwwroot/process_task/",
+          "script_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/home/site/wwwroot/process_task/__init__.py",
+          "config_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/home/site/wwwroot/process_task/function.json",
+          "test_data_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/tmp/FunctionsData/process_task.dat",
+          "href": "https://cover-letter-test.azurewebsites.net/admin/functions/process_task",
+          "config": {
+            "scriptFile": "__init__.py",
+            "bindings": [
+              {
+                "type": "serviceBusTrigger",
+                "direction": "in",
+                "name": "msg",
+                "queueName": "job-matching-queue",
+                "connection": "SERVICE_BUS_CONNECTION_STRING"
+              }
+            ]
+          },
+          "language": "python",
+          "isDisabled": false
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_cover_letter_test_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Web/sites/functions",
+        "apiVersion": "2023-12-01",
+        "name": "[format('{0}/{1}', parameters('sites_cover_letter_test_name'), 'scrape_jobs')]",
+        "properties": {
+          "script_root_path_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/home/site/wwwroot/scrape_jobs/",
+          "script_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/home/site/wwwroot/scrape_jobs/__init__.py",
+          "config_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/home/site/wwwroot/scrape_jobs/function.json",
+          "test_data_href": "https://cover-letter-test.azurewebsites.net/admin/vfs/tmp/FunctionsData/scrape_jobs.dat",
+          "href": "https://cover-letter-test.azurewebsites.net/admin/functions/scrape_jobs",
+          "config": {
+            "scriptFile": "__init__.py",
+            "bindings": [
+              {
+                "name": "mytimer",
+                "type": "timerTrigger",
+                "direction": "in",
+                "schedule": "0 0 0 * * *"
+              },
+              {
+                "name": "outputQueueItem",
+                "type": "queue",
+                "direction": "out",
+                "queueName": "job-scrape-complete",
+                "connection": "AzureWebJobsStorage"
+              }
+            ]
+          },
+          "language": "python",
+          "isDisabled": false
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_cover_letter_test_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Web/sites/hostNameBindings",
+        "apiVersion": "2023-12-01",
+        "name": "[format('{0}/{1}', parameters('sites_cover_letter_test_name'), format('{0}.azurewebsites.net', parameters('sites_cover_letter_test_name')))]",
+        "properties": {
+          "siteName": "cover-letter-test",
+          "hostNameType": "Verified"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_cover_letter_test_name'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+        "apiVersion": "2024-05-15",
+        "name": "[format('{0}/{1}/{2}', parameters('databaseAccounts_cover_letter_db_name'), 'JobDatabase', 'jobs')]",
+        "properties": {
+          "resource": {
+            "id": "jobs",
+            "indexingPolicy": {
+              "indexingMode": "consistent",
+              "automatic": true,
+              "includedPaths": [
+                {
+                  "path": "/*"
+                }
+              ],
+              "excludedPaths": [
+                {
+                  "path": "/\"_etag\"/?"
+                }
+              ]
+            },
+            "partitionKey": {
+              "paths": [
+                "/id"
+              ],
+              "kind": "Hash",
+              "version": 2
+            },
+            "conflictResolutionPolicy": {
+              "mode": "LastWriterWins",
+              "conflictResolutionPath": "/_ts"
+            }
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', parameters('databaseAccounts_cover_letter_db_name'), 'JobDatabase')]"
+        ]
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "apiVersion": "2023-05-01",
+        "name": "[format('{0}/{1}/{2}', parameters('storageAccounts_coverletterstorage1_name'), 'default', 'azure-webjobs-hosts')]",
+        "properties": {
+          "immutableStorageWithVersioning": {
+            "enabled": false
+          },
+          "defaultEncryptionScope": "$account-encryption-key",
+          "denyEncryptionScopeOverride": false,
+          "publicAccess": "None"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_coverletterstorage1_name'), 'default')]"
+        ]
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "apiVersion": "2023-05-01",
+        "name": "[format('{0}/{1}/{2}', parameters('storageAccounts_coverletterstorage1_name'), 'default', 'azure-webjobs-secrets')]",
+        "properties": {
+          "immutableStorageWithVersioning": {
+            "enabled": false
+          },
+          "defaultEncryptionScope": "$account-encryption-key",
+          "denyEncryptionScopeOverride": false,
+          "publicAccess": "None"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_coverletterstorage1_name'), 'default')]"
+        ]
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "apiVersion": "2023-05-01",
+        "name": "[format('{0}/{1}/{2}', parameters('storageAccounts_coverletterstorage1_name'), 'default', 'cvs')]",
+        "properties": {
+          "immutableStorageWithVersioning": {
+            "enabled": false
+          },
+          "defaultEncryptionScope": "$account-encryption-key",
+          "denyEncryptionScopeOverride": false,
+          "publicAccess": "None"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_coverletterstorage1_name'), 'default')]"
+        ]
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "apiVersion": "2023-05-01",
+        "name": "[format('{0}/{1}/{2}', parameters('storageAccounts_coverletterstorage1_name'), 'default', 'scm-releases')]",
+        "properties": {
+          "immutableStorageWithVersioning": {
+            "enabled": false
+          },
+          "defaultEncryptionScope": "$account-encryption-key",
+          "denyEncryptionScopeOverride": false,
+          "publicAccess": "None"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_coverletterstorage1_name'), 'default')]"
+        ]
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+        "apiVersion": "2023-05-01",
+        "name": "[format('{0}/{1}/{2}', parameters('storageAccounts_coverletterstorage1_name'), 'default', 'cover-letter-function-app5142b885e2ed')]",
+        "properties": {
+          "accessTier": "TransactionOptimized",
+          "shareQuota": 102400,
+          "enabledProtocols": "SMB"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_coverletterstorage1_name'), 'default')]"
+        ]
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+        "apiVersion": "2023-05-01",
+        "name": "[format('{0}/{1}/{2}', parameters('storageAccounts_coverletterstorage1_name'), 'default', 'cover-letter-test9e40')]",
+        "properties": {
+          "accessTier": "TransactionOptimized",
+          "shareQuota": 102400,
+          "enabledProtocols": "SMB"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_coverletterstorage1_name'), 'default')]"
+        ]
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/queueServices/queues",
+        "apiVersion": "2023-05-01",
+        "name": "[format('{0}/{1}/{2}', parameters('storageAccounts_coverletterstorage1_name'), 'default', 'job-scrape-complete')]",
+        "properties": {
+          "metadata": {}
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/queueServices', parameters('storageAccounts_coverletterstorage1_name'), 'default')]"
+        ]
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+        "apiVersion": "2023-05-01",
+        "name": "[format('{0}/{1}/{2}', parameters('storageAccounts_coverletterstorage1_name'), 'default', 'AzureFunctionsDiagnosticEvents202411')]",
+        "properties": {},
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/tableServices', parameters('storageAccounts_coverletterstorage1_name'), 'default')]"
+        ]
+      }
+    ]
+}

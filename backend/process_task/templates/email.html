@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Matched Jobs and Cover Letters</title>
+    <style>
+        /* Add any styles you need for the email */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #5cb85c;
+        }
+        h2 {
+            color: #337ab7;
+        }
+        .job-container {
+            margin-bottom: 20px;
+        }
+        .job-description {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        hr {
+            border: 1px solid #ccc;
+        }
+        a {
+            color: #337ab7;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Top {{ jobs|length }} Jobs Matching Your CV</h1>
+    {% for job in jobs %}
+        <div class="job-container">
+            <h2>{{ job['title'] }}</h2>
+            <p><strong>Company:</strong> {{ job.get('company_name', 'Unknown Company') }}</p>
+            <p><strong>Location:</strong> {{ job.get('location', 'Unknown Location') }}</p>
+            <p><strong>Match Score:</strong> {{ (job['score'] * 100) | round(2) }}%</p>
+            <p><strong>Job Link:</strong> <a href="{{ job['link'] }}">{{ job['link'] }}</a></p>
+            <h3>Generated Cover Letter:</h3>
+            <pre>{{ job['cover_letter'] }}</pre>
+            <hr>
+        </div>
+    {% endfor %}
+</body>
+</html>

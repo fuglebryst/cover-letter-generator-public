@@ -1,0 +1,20 @@
+/* src/pages/Terms.css */
+
+.terms-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+  }
+  
+  .terms-container h1 {
+    color: #5cb85c;
+    margin-bottom: 20px;
+  }
+  
+  .terms-container p {
+    color: #555;
+    line-height: 1.6;
+  }
+  

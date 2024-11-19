@@ -1,0 +1,9 @@
+# Ignore local settings
+local.settings.json
+
+# Ignore Python cache files
+*.pyc
+__pycache__/
+.vscode/
+.git/
+

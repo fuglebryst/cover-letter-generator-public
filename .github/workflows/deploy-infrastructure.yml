@@ -1,0 +1,93 @@
+name: Deploy Azure Infrastructure and Functions
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+
+      - name: Log into Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Bicep file
+        id: bicep
+        uses: azure/bicep-deploy@v1
+        with:
+          type: deployment
+          operation: create
+          scope: resourceGroup
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION }}
+          resource-group-name: ${{ secrets.AZURE_RG }}
+          template-file: infrastructure/template.bicep
+          name: production
+          parameters: |
+            {
+              "openAiApiKey": "${{ secrets.OPENAI_API_KEY }}",
+              "smtpPassword": "${{ secrets.SMTP_PASSWORD }}",
+              "smtpUsername": "${{ secrets.SMTP_USERNAME }}",
+              "smtpServer": "smtp.gmail.com"
+            }
+
+      - name: Get Static Web App Deployment Token
+        id: get-token
+        run: |
+          TOKEN=$(az staticwebapp secrets list \
+            --name ${{ steps.bicep.outputs.webAppName }} \
+            --query "properties.apiKey" -o tsv)
+          
+          if [ -z "$TOKEN" ]; then
+            echo "Failed to get deployment token"
+            exit 1
+          fi
+          
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Build and Deploy Static Web App
+        uses: Azure/static-web-apps-deploy@v1
+        env:
+          CI: false
+        with:
+          azure_static_web_apps_api_token: ${{ steps.get-token.outputs.token }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "./static-web-app/app"
+          api_location: ""
+          output_location: "build"
+          skip_api_build: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        working-directory: ./backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+
+      - name: Deploy Function App
+        uses: Azure/functions-action@v1
+        env:
+          python-version: '3.11'
+        with:
+          app-name: ${{ steps.bicep.outputs.functionAppName }}
+          package: backend
+          respect-funcignore: true
+          scm-do-build-during-deployment: true
+          enable-oryx-build: false

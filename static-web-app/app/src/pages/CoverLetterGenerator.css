@@ -1,0 +1,139 @@
+/* frontend/src/pages/CoverLetterGenerator.css */
+
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+h1 {
+    text-align: center;
+    color: #5cb85c;
+    margin-bottom: 20px;
+}
+
+.generator-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.form-section {
+    flex: 1 1 30%;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.output-section {
+    flex: 1 1 65%;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+input[type='email'],
+input[type='url'],
+input[type='file'],
+textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+textarea {
+    resize: vertical;
+    height: 100px;
+}
+
+button {
+    margin-top: 20px;
+    background-color: #5cb85c;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #4cae4c;
+}
+
+button:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+.toggle-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.toggle-group label {
+    font-weight: normal;
+}
+
+.output-section label {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.additional-options {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.option-button {
+    background-color: #0275d8;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    flex: 1;
+    text-align: center;
+}
+
+.option-button:hover {
+    background-color: #025aa5;
+}
+
+@media (max-width: 768px) {
+    .generator-form {
+        flex-direction: column;
+    }
+
+    .form-section,
+    .output-section {
+        flex: 1 1 100%;
+    }
+
+    .additional-options {
+        flex-direction: column;
+    }
+
+    .option-button {
+        width: 100%;
+    }
+}

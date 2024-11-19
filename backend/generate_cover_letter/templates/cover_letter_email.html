@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Generert Søknadsbrev</title>
+    <style>
+        /* Add any styles you need for the email */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #5cb85c;
+        }
+        .cover-letter {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .job-link {
+            margin-top: 20px;
+        }
+        a {
+            color: #337ab7;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ditt Genererte Søknadsbrev</h1>
+    <div class="cover-letter">
+        {{ cover_letter }}
+    </div>
+    <div class="job-link">
+        <p>Du kan se den originale jobbannonsen her:</p>
+        <a href="{{ job_ad_link }}">{{ job_ad_link }}</a>
+    </div>
+</body>
+</html>

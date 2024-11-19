@@ -1,0 +1,319 @@
+/* frontend/src/pages/Home.css */
+
+.home {
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* Hero Section Styling */
+  .hero-section {
+    height: 90vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  
+  .hero-overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    height: 100%;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+  }
+  
+  .hero-overlay h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+  }
+  
+  .hero-overlay p {
+    font-size: 1.5em;
+    margin-bottom: 30px;
+    max-width: 800px;
+  }
+  
+  .cta-button {
+    background-color: #5cb85c;
+    color: #fff;
+    padding: 15px 30px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    background-color: #4cae4c;
+  }
+  
+  /* Features Section */
+  .features-section {
+    padding: 60px 20px;
+    background-color: #f8f9fa;
+    text-align: center;
+  }
+  
+  .features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .feature {
+    text-align: center;
+    max-width: 250px;
+    margin: 20px;
+  }
+  
+  .feature h3 {
+    margin-top: 15px;
+    font-size: 1.3em;
+    color: #333;
+  }
+  
+  .feature p {
+    margin-top: 10px;
+    font-size: 1em;
+    color: #666;
+  }
+  
+  /* Why Choose Us Section */
+  .why-us-section {
+    padding: 60px 20px;
+    background-color: #fff;
+    text-align: center;
+  }
+  
+  .why-us-section h2 {
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 40px;
+  }
+  
+  .benefits {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .benefit {
+    text-align: center;
+    max-width: 250px;
+    margin: 20px;
+  }
+  
+  .benefit h3 {
+    margin-top: 15px;
+    font-size: 1.3em;
+    color: #333;
+  }
+  
+  .benefit p {
+    margin-top: 10px;
+    font-size: 1em;
+    color: #666;
+  }
+  
+  /* Examples Section */
+.example-section {
+    padding: 60px 20px;
+    background-color: #f8f9fa;
+    text-align: center;
+  }
+  
+  .example-section h2 {
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 30px;
+  }
+  
+  .examples {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .example {
+    text-align: center;
+    max-width: 250px;
+    margin: 20px;
+  }
+  
+  .example img {
+    width: 100%;
+    border: 1px solid #ccc;
+  }
+  
+  .example p {
+    margin-top: 10px;
+    font-size: 1em;
+    color: #555;
+    font-weight: bold;
+  }
+  
+  .example img {
+    width: 100%;
+    border: 1px solid #ccc;
+    cursor: pointer;
+  }
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000; /* Ensures the modal is above other elements */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: auto;
+  }
+  
+  .modal-image {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 5px;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    color: #fff;
+    background-color: #000;
+    border: none;
+    font-size: 2em;
+    line-height: 1em;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+  
+  .close-button:hover {
+    background-color: #444;
+  }
+
+  /* Pricing Section */
+  .pricing-section {
+    padding: 60px 20px;
+    background-color: #fff;
+    text-align: center;
+  }
+  
+  .pricing-section h2 {
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 40px;
+  }
+  
+  .pricing {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .price-option {
+    background-color: #f8f9fa;
+    padding: 30px;
+    margin: 20px;
+    border-radius: 8px;
+    max-width: 300px;
+  }
+  
+  .price-option h3 {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .price-option p {
+    font-size: 1.5em;
+    color: #5cb85c;
+    margin-bottom: 20px;
+  }
+  
+  .price-option ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+  }
+  
+  .price-option ul li {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  
+  /* AI Benefits Section */
+  .ai-benefits-section {
+    padding: 60px 20px;
+    background-color: #f8f9fa;
+    text-align: center;
+  }
+  
+  .ai-benefits-section h2 {
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 30px;
+  }
+  
+  .ai-benefits-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .ai-benefits-section ul li {
+    font-size: 1.2em;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  
+  /* Articles Section */
+  .articles-section {
+    padding: 60px 20px;
+    background-color: #fff;
+    text-align: center;
+  }
+  
+  .articles-section h2 {
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .articles-section p {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 30px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .hero-overlay h1 {
+      font-size: 2em;
+    }
+  
+    .hero-overlay p {
+      font-size: 1em;
+    }
+  
+    .features, .benefits, .pricing {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  
