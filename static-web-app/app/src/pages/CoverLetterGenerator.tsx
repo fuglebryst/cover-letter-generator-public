@@ -4,14 +4,15 @@ import React, { useState, useEffect } from 'react';
 import './CoverLetterGenerator.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { TextAreaEvent } from '../types';
 
-function CoverLetterGenerator() {
-    const [cvFile, setCvFile] = useState(null);
+const CoverLetterGenerator: React.FC = () => {
+    const [cvFile, setCvFile] = useState<File | null>(null);
     const [hasCv, setHasCv] = useState(true);
     const [backgroundText, setBackgroundText] = useState('');
     const [jobAdOption, setJobAdOption] = useState('link');
     const [jobAdLink, setJobAdLink] = useState('');
-    const [jobAdFile, setJobAdFile] = useState(null);
+    const [jobAdFile, setJobAdFile] = useState<File | null>(null);
     const [jobAdText, setJobAdText] = useState('');
     const [coverLetter, setCoverLetter] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +23,7 @@ function CoverLetterGenerator() {
         setCoverLetter(`[Din søknadstekst vil vises her etter generering...]`);
     }, []);
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsLoading(true);
         setShowOptions(false);
@@ -41,7 +42,7 @@ function CoverLetterGenerator() {
         
         if (jobAdOption === 'link') {
             formData.append('job_ad_link', jobAdLink);
-        } else if (jobAdOption === 'upload') {
+        } else if (jobAdOption === 'upload' && jobAdFile) {
             formData.append('job_ad_file', jobAdFile);
         } else if (jobAdOption === 'freeform') {
             formData.append('job_description', jobAdText);
@@ -130,6 +131,14 @@ function CoverLetterGenerator() {
         }
     };
 
+    const handleBackgroundTextChange = (e: TextAreaEvent): void => {
+        setBackgroundText(e.target.value);
+    };
+
+    const handleJobAdTextChange = (e: TextAreaEvent): void => {
+        setJobAdText(e.target.value);
+    };
+
     return (
         <div className="container">
             <h1>Generer Søknadsbrev</h1>
@@ -169,7 +178,12 @@ function CoverLetterGenerator() {
                                 id="cv_file"
                                 name="cv_file"
                                 accept=".txt,.pdf,.docx"
-                                onChange={(e) => setCvFile(e.target.files[0])}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    const files = e.target.files;
+                                    if (files && files.length > 0) {
+                                        setCvFile(files[0]);
+                                    }
+                                }}
                                 required
                             />
                         </>
@@ -180,7 +194,7 @@ function CoverLetterGenerator() {
                                 id="background_text"
                                 name="background_text"
                                 value={backgroundText}
-                                onChange={(e) => setBackgroundText(e.target.value)}
+                                onChange={handleBackgroundTextChange}
                                 placeholder="Skriv inn din bakgrunn og erfaring..."
                             ></textarea>
                         </>
@@ -244,7 +258,12 @@ function CoverLetterGenerator() {
                                 id="job_ad_file"
                                 name="job_ad_file"
                                 accept=".txt,.pdf,.docx"
-                                onChange={(e) => setJobAdFile(e.target.files[0])}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    const files = e.target.files;
+                                    if (files && files.length > 0) {
+                                        setJobAdFile(files[0]);
+                                    }
+                                }}
                                 required
                             />
                         </>
@@ -257,7 +276,7 @@ function CoverLetterGenerator() {
                                 id="job_ad_text"
                                 name="job_ad_text"
                                 value={jobAdText}
-                                onChange={(e) => setJobAdText(e.target.value)}
+                                onChange={handleJobAdTextChange}
                                 placeholder="Kopier og lim inn teksten fra jobbannonsen her..."
                                 required
                             ></textarea>

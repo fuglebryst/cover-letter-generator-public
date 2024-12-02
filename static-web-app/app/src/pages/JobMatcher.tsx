@@ -2,16 +2,17 @@
 
 import React, { useState } from 'react';
 import './JobMatcher.css';
+import { LocationData } from '../types';
 
-function JobMatcher() {
+const JobMatcher: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [cvFile, setCvFile] = useState(null);
+  const [cvFile, setCvFile] = useState<File | null>(null);
   const [jobPreferences, setJobPreferences] = useState('');
   const [fylke, setFylke] = useState('Velg alle');
   const [kommuneBydel, setKommuneBydel] = useState('Velg alle');
   const [isLoading, setIsLoading] = useState(false);
 
-  const locationData = {
+  const locationData: LocationData = {
     'Oslo': ['Oslo'],
     'Østfold': ['Velg alle', 'Halden', 'Moss', 'Sarpsborg', 'Fredrikstad', 'Hvaler', 'Råde', 'Våler', 'Skiptvet', 'Indre Østfold', 'Rakkestad', 'Marker', 'Aremark'],
     'Akershus': ['Velg alle', 'Bærum', 'Asker', 'Lillestrøm', 'Nordre Follo', 'Ullensaker', 'Nesodden', 'Frogn', 'Vestby', 'Ås', 'Enebakk', 'Lørenskog', 'Rælingen', 'Aurskog-Høland', 'Nes', 'Gjerdrum', 'Nittedal', 'Lunner', 'Jevnaker', 'Nannestad', 'Eidsvoll', 'Hurdal'],
@@ -29,18 +30,16 @@ function JobMatcher() {
     'Finnmark': ['Velg alle', 'Alta', 'Hammerfest', 'Sør-Varanger', 'Vadsø', 'Karasjok', 'Kautokeino', 'Loppa', 'Hasvik', 'Måsøy', 'Nordkapp', 'Porsanger', 'Lebesby', 'Gamvik', 'Tana', 'Berlevåg', 'Båtsfjord', 'Vardø', 'Nesseby'],
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Validate form fields
     if (!email || !cvFile) {
       alert('Vennligst fyll ut alle påkrevde felt og last opp en CV.');
       setIsLoading(false);
       return;
     }
 
-    // Create form data
     const formData = new FormData();
     formData.append('email', email);
     formData.append('cv_file', cvFile);
@@ -58,7 +57,6 @@ function JobMatcher() {
         const data = await response.json();
         if (data.message === 'Success') {
           alert('Takk! Vi sender deg matchede jobber og søknadsbrev på e-post.');
-          // Optionally, redirect or clear the form
           setEmail('');
           setCvFile(null);
           setJobPreferences('');
@@ -79,12 +77,11 @@ function JobMatcher() {
     }
   };
 
-  const handleFylkeChange = (e) => {
+  const handleFylkeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedFylke = e.target.value;
     setFylke(selectedFylke);
     setKommuneBydel('Velg alle');
   };
-  
 
   const shouldShowKommuneBydel = fylke !== 'Oslo' && fylke !== 'Velg alle';
 
@@ -99,7 +96,7 @@ function JobMatcher() {
           name="email"
           required
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
         />
 
         <label htmlFor="cv_file">Last opp din CV:</label>
@@ -109,7 +106,12 @@ function JobMatcher() {
           name="cv_file"
           accept=".txt,.pdf,.docx"
           required
-          onChange={(e) => setCvFile(e.target.files[0])}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+              setCvFile(files[0]);
+            }
+          }}
         />
 
         <label htmlFor="job_preferences">Dine jobbpreferanser:</label>
@@ -117,9 +119,9 @@ function JobMatcher() {
           id="job_preferences"
           name="job_preferences"
           value={jobPreferences}
-          onChange={(e) => setJobPreferences(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setJobPreferences(e.target.value)}
           placeholder="Beskriv hvilke typer jobber du er interessert i..."
-        ></textarea>
+        />
 
         <label htmlFor="fylke">Velg fylke:</label>
         <select id="fylke" name="fylke" value={fylke} onChange={handleFylkeChange}>
@@ -138,7 +140,7 @@ function JobMatcher() {
               id="kommune_bydel"
               name="kommune_bydel"
               value={kommuneBydel}
-              onChange={(e) => setKommuneBydel(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setKommuneBydel(e.target.value)}
             >
               {locationData[fylke]?.map((kommune) => (
                 <option key={kommune} value={kommune}>
@@ -149,13 +151,12 @@ function JobMatcher() {
           </>
         )}
 
-
         <button type="submit" disabled={isLoading}>
           {isLoading ? 'Sender...' : 'Finn Jobber'}
         </button>
       </form>
     </div>
   );
-}
+};
 
 export default JobMatcher;

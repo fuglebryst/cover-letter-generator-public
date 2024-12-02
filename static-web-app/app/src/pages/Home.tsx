@@ -16,7 +16,7 @@ function Home() {
   const [modalImageSrc, setModalImageSrc] = useState('');
   const [modalImageAlt, setModalImageAlt] = useState('');
 
-  const openModal = (imageSrc, imageAlt) => {
+  const openModal = (imageSrc: string, imageAlt: string) => {
     setModalImageSrc(imageSrc);
     setModalImageAlt(imageAlt);
     setIsModalOpen(true);

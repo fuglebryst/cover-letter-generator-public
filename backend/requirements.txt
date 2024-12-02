@@ -5,7 +5,7 @@ azure-storage-blob
 certifi
 cffi
 charset-normalizer
-cryptography
+cryptography == 43.0.3
 docx2txt
 idna
 isodate

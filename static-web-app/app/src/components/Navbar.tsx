@@ -3,10 +3,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css'; // Ensure this CSS file exists for styling
+import { NavbarProps } from '../types';
 
-function Navbar() {
+const Navbar: React.FC<NavbarProps> = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const navRef = useRef(null);
+  const navRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -17,8 +18,8 @@ function Navbar() {
   };
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (navRef.current && !navRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
@@ -33,7 +34,7 @@ function Navbar() {
     <nav className="navbar" ref={navRef}>
       <div className="navbar-container">
         <Link to="/" className="navbar-logo" onClick={closeMenu}>
-          Søknadsbrev.no
+          Soknadsbrev.no
         </Link>
         <div className="menu-icon" onClick={toggleMenu}>
           {isOpen ? '✕' : '☰'}

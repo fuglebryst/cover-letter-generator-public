@@ -31,16 +31,16 @@ The Cover Letter Generator is a cutting-edge application that automates the tedi
    - Get personalized cover letters by email for top matches
 
 ## ✨ Features
-- **AI-Powered Cover Letters**: Tailored to specific job descriptions.
-- **Job Matching System**: Matches CVs to relevant jobs using semantic embeddings.
-- **Seamless Document Processing**: Parses CVs and job descriptions intelligently.
-- **Email Automation**: Sends personalized cover letters directly to your inbox.
+- **AI-Powered Cover Letters**: Tailored to specific job descriptions using GPT-4
+- **Job Matching System**: Matches CVs to relevant jobs using semantic embeddings
+- **Location-Based Filtering**: Support for all Norwegian counties and municipalities
+- **Email Automation**: Sends personalized cover letters directly to your inbox
 
 ## 🛠️ Technology Stack
 
 ### AI & Machine Learning
 - **OpenAI GPT-4**: Advanced language model for generating personalized cover letters
-- **Text Embeddings**: Semantic job matching
+- **Text Embeddings**: Semantic job matching using OpenAI embeddings
 - **Document Parsing**: Intelligent handling of CVs and job descriptions
 
 ### Infrastructure & Cloud
@@ -58,15 +58,16 @@ The Cover Letter Generator is a cutting-edge application that automates the tedi
 - **Azure Blob Storage**: Document and file storage
 
 ### Frontend Technologies
-- **React**: Modern frontend framework
-- **JavaScript**: Frontend programming language
+- **React 18+**: Modern frontend framework
+- **TypeScript**: Type-safe frontend development
 - **Azure Static Web Apps**: Hosting and automatic deployment
+- **Modern CSS**: Responsive design with CSS modules
 
 ### DevOps & Tools
 - **GitHub Actions**: CI/CD pipeline automation
 - **Azure CLI**: Command-line management of Azure resources
 - **VS Code**: Primary development environment with Azure extensions
-- **Cursor**: AI-powered code editor
+- **ESLint & Prettier**: Code quality and formatting
 
 ## 🔐 Required Secrets
 

@@ -1,4 +1,4 @@
-// frontend/src/App.js
+// frontend/src/App.tsx
 
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -8,9 +8,9 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Terms from './pages/Terms';
 import JobMatcher from './pages/JobMatcher';
-import CoverLetterGenerator from './pages/CoverLetterGenerator'; // Import the new page
+import CoverLetterGenerator from './pages/CoverLetterGenerator';
 
-function App() {
+const App: React.FC = () => {
   return (
     <Router>
       <Navbar />
@@ -20,10 +20,10 @@ function App() {
         <Route path="/kontakt" element={<Contact />} />
         <Route path="/betingelser" element={<Terms />} />
         <Route path="/jobb-matcher" element={<JobMatcher />} />
-        <Route path="/cover-letter-generator" element={<CoverLetterGenerator />} /> {/* New Route */}
+        <Route path="/cover-letter-generator" element={<CoverLetterGenerator />} />
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;
